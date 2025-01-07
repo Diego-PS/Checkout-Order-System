@@ -1,0 +1,48 @@
+services:
+  checkout-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: checkout-server
+    restart: unless-stopped
+    env_file: ./server/.env
+    ports:
+      - '3000:3000'
+    networks:
+      - app-network
+    command: sh -c "npm run migrate && npm run dev"
+    depends_on:
+      checkout-db-local:
+        condition: service_healthy
+  checkout-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: checkout-client
+    ports:
+      - '5173:5173'
+    command: sh -c "npm run dev"
+    depends_on:
+      - checkout-server
+  checkout-db-local:
+    image: postgres:latest
+    container_name: checkout-db-local
+    restart: unless-stopped
+    env_file: ./server/.env
+    volumes:
+      - postgres-data-local:/var/lib/postgresql/data
+    ports: 
+      - '5432:5432'
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data-local:
