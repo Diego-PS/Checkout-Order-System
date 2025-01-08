@@ -33,13 +33,61 @@ model Category {
 }
 
 model Item {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  price       Float
-  category_id Int
-  category    Category @relation(fields: [category_id], references: [id])
-  image_id    String
-  image       Image    @relation(fields: [image_id], references: [id])
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  price        Float
+  category_id  Int
+  category     Category       @relation(fields: [category_id], references: [id])
+  image_id     String
+  image        Image          @relation(fields: [image_id], references: [id])
+  ItemPurchase ItemPurchase[]
 
   @@map("items")
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+}
+
+model Payment {
+  id     Int           @id @default(autoincrement())
+  buyer  String
+  code   String
+  status PaymentStatus @default(PENDING)
+  value  Float
+  Order  Order?
+
+  @@map("payments")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  DELIVERED
+  CANCELED
+}
+
+model Order {
+  id         Int            @id @default(autoincrement())
+  payment_id Int            @unique()
+  payment    Payment        @relation(fields: [payment_id], references: [id])
+  status     OrderStatus    @default(PENDING)
+  purchases  ItemPurchase[]
+
+  @@map("orders")
+}
+
+model ItemPurchase {
+  id          Int   @id @default(autoincrement())
+  item_id     Int
+  item        Item  @relation(fields: [item_id], references: [id])
+  quantity    Int
+  order_id    Int
+  order       Order @relation(fields: [order_id], references: [id])
+  item_value  Float
+  total_value Float
+
+  @@map("item_purchases")
 }

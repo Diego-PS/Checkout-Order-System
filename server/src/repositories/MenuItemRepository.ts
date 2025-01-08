@@ -1,29 +1,6 @@
 import { PrismaClientSingleton } from '@database'
 import { MenuItem, MenuItemInfo } from '@entities'
-import { removeAttributes } from '@utils'
-
-type ItemDB = {
-  image: {
-    id: string
-    url: string
-  }
-  category: {
-    image: {
-      id: string
-      url: string
-    }
-  } & {
-    id: number
-    name: string
-    image_id: string
-  }
-} & {
-  id: number
-  name: string
-  price: number
-  category_id: number
-  image_id: string
-}
+import { convertToMenuItem } from './utils'
 
 export class MenuItemRepository {
   private prisma = PrismaClientSingleton.getPrismaClient()
@@ -35,35 +12,43 @@ export class MenuItemRepository {
       },
     },
   }
-  private convertToMenuItem(itemDB: ItemDB): MenuItem {
-    const category = removeAttributes(itemDB.category, 'image_id')
-    const item = {
-      ...removeAttributes(itemDB, 'category_id', 'image_id'),
-      category,
-    }
-    return item
-  }
 
   async create(payload: MenuItemInfo): Promise<MenuItem> {
     const itemDB = await this.prisma.item.create({
       data: payload,
       include: this.includeAll,
     })
-    const item = this.convertToMenuItem(itemDB)
+    const item = convertToMenuItem(itemDB)
     return item
   }
 
-  async searchByName(name?: string): Promise<MenuItem[]> {
+  async search(
+    filter?: Partial<MenuItemInfo>,
+    name?: string
+  ): Promise<MenuItem[]> {
     const itemsDB = await this.prisma.item.findMany({
       where: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
+        ...filter,
+        name: name
+          ? {
+              contains: name,
+              mode: 'insensitive',
+            }
+          : undefined,
       },
       include: this.includeAll,
     })
-    const items = itemsDB.map((itemDB) => this.convertToMenuItem(itemDB))
+    const items = itemsDB.map((itemDB) => convertToMenuItem(itemDB))
     return items
+  }
+
+  async findById(id: number): Promise<MenuItem | null> {
+    const itemDB = await this.prisma.item.findUnique({
+      where: { id },
+      include: this.includeAll,
+    })
+    if (itemDB === null) return null
+    const item = convertToMenuItem(itemDB)
+    return item
   }
 }
