@@ -10,7 +10,7 @@ services:
       - '3000:3000'
     networks:
       - app-network
-    command: sh -c "npm run migrate && npm run dev"
+    command: sh -c "npm run migrate && npm run seed && npm run dev"
     depends_on:
       checkout-db-local:
         condition: service_healthy
