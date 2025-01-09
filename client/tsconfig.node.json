@@ -27,8 +27,12 @@
       "@pages": ["pages/index.ts"],
       "@api": ["api/index.ts"],
       "@routes": ["routes/index.tsx"],
-      "@entities": ["entities/index.ts"]
-    }
+      "@entities": ["entities/index.ts"],
+      "@components": ["components/index.ts"],
+      "@enums": ["enums/index.ts"],
+      "@hooks": ["hooks/index.ts"],
+      "@icons": ["components/Icons.tsx"]
+    },
   },
   "include": ["vite.config.ts"]
 }

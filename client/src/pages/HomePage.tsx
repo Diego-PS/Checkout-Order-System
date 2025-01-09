@@ -1,6 +1,17 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { api } from '@api'
 import { MenuItem, MenuItemCategory } from '@entities'
+import { OrderDrawer } from '@components'
+import { useOrder } from '@hooks'
+import { RestaurantBill } from '@icons'
+
+const getWindowDimensions = () => {
+  const { innerWidth: width, innerHeight: height } = window
+  return {
+    width,
+    height,
+  }
+}
 
 const allCategory: MenuItemCategory = {
   id: 0,
@@ -11,7 +22,7 @@ const allCategory: MenuItemCategory = {
   },
 }
 
-export type CategoryCardProps = {
+type CategoryCardProps = {
   category: MenuItemCategory
   selectedCategoryId: number
   setSelectedCategoryId: React.Dispatch<React.SetStateAction<number>>
@@ -20,7 +31,7 @@ export type CategoryCardProps = {
 const CategoryCard = (props: CategoryCardProps) => {
   return (
     <div
-      className="shrink-0 relative group w-32 h-32 hover:cursor-pointer"
+      className="shrink-0 relative group w-32 h-32 cursor-pointer"
       onClick={() => props.setSelectedCategoryId(props.category.id)}
     >
       {/* Background Image */}
@@ -46,12 +57,86 @@ const CategoryCard = (props: CategoryCardProps) => {
     </div>
   )
 }
+type MenuItemCardProps = {
+  item: MenuItem
+  windowDimensions: { width: number; height: number }
+  addItem: () => void
+  openDrawer: () => void
+}
+
+const MenuItemCard = (props: MenuItemCardProps) => {
+  const handleClick = () => {
+    props.addItem()
+    props.openDrawer()
+  }
+  return (
+    <div className="w-full max-w-2xl flex flex-row items-center p-6 gap-5">
+      <div className="shrink-0 relative group w-32 h-32 cursor-pointer">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${props.item.image.url})` }}
+        />
+      </div>
+      {props.windowDimensions.width > 720 ? (
+        <>
+          <div className="w-full flex flex-col">
+            <h2 className="font-imperial text-4xl text-darkCharcoal">
+              {props.item.name}
+            </h2>
+            <h3 className="font-imperial text-2xl text-darkCharcoal">
+              ${props.item.price.toFixed(2)}
+            </h3>
+          </div>
+          <div className="w-full flex flex-row-reverse items-center">
+            <div
+              onClick={handleClick}
+              className="flex flex-row items-center justify-center bg-oliveGreen w-32 h-10 cursor-pointer hover:bg-oliveGreenDark"
+            >
+              <p className="text-darkCharcoal">Add to order</p>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="w-full flex flex-col gap-1">
+            <h2 className="font-imperial text-2xl text-darkCharcoal">
+              {props.item.name}
+            </h2>
+            <h3 className="font-imperial text-xl text-darkCharcoal">
+              ${props.item.price.toFixed(2)}
+            </h3>
+            <div
+              onClick={handleClick}
+              className="flex flex-row items-center justify-center bg-oliveGreen w-32 h-10 cursor-pointer hover:bg-oliveGreenDark"
+            >
+              <p className="text-darkCharcoal">Add to order</p>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 export const HomePage = () => {
   const [cateogires, setCategories] = useState<MenuItemCategory[]>([])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [items, setItems] = useState<MenuItem[]>([])
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions()
+  )
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
+  const { order, addItem, removeItem } = useOrder()
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions())
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const getCategories = async () => {
     try {
@@ -107,8 +192,8 @@ export const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="w-full bg-espresso flex flex-col items-center justify-center">
-          <div className="w-80 bg-white h-12 m-5 flex flex-col items-center justify-center">
+        <div className="w-full bg-espresso h-24 flex flex-row items-center justify-center gap-3">
+          <div className="w-64 bg-white h-12 flex flex-col items-center justify-center">
             <input
               type="text"
               className="w-full px-5 py-3 focus:outline-none"
@@ -116,10 +201,34 @@ export const HomePage = () => {
               onChange={(event) => setSearchTerm(event.target.value)}
             ></input>
           </div>
+          <div
+            onClick={() => setDrawerOpen(true)}
+            className="cursor-pointer hover:bg-richBrown h-24 w-16 flex items-center justify-center"
+          >
+            <RestaurantBill height={50} width={50} color="white" />
+          </div>
         </div>
-        <p className="mt-2">You typed: {searchTerm}</p>
-        <p>{JSON.stringify(items)}</p>
+        {items.map((item, index) => (
+          <Fragment key={item.id}>
+            <MenuItemCard
+              item={item}
+              windowDimensions={windowDimensions}
+              addItem={() => addItem(item)}
+              openDrawer={() => setDrawerOpen(true)}
+            />
+            {index < items.length - 1 && (
+              <div className="max-w-2xl w-11/12 bg-espresso h-0.5" />
+            )}
+          </Fragment>
+        ))}
       </div>
+      <OrderDrawer
+        open={drawerOpen}
+        setOpen={setDrawerOpen}
+        order={order}
+        addItem={addItem}
+        removeItem={removeItem}
+      />
     </div>
   )
 }

@@ -11,6 +11,7 @@ export default {
         creamWhite: '#FAF3E0', // Background
         richBrown: '#8B4513', // Primary Accent
         oliveGreen: '#A3C293', // Secondary Accent
+        oliveGreenDark: '#8aa57d',
         rustyRed: '#D97742', // Highlight
         darkCharcoal: '#333333', // Text
         espresso: '#4B2E2B',

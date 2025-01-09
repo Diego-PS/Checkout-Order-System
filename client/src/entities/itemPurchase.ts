@@ -14,3 +14,8 @@ export type ItemPurchaseInfo = {
   price: number
   quantity: number
 }
+
+export type ItemInOrder = {
+  item: MenuItem
+  quantity: number
+}

@@ -1,6 +1,6 @@
 import { OrderStatus } from '@enums'
 import { Payment } from './payment'
-import { ItemPurchase, ItemPurchaseInfo } from './itemPurchase'
+import { ItemInOrder, ItemPurchase, ItemPurchaseInfo } from './itemPurchase'
 
 export type Order = {
   id: number
@@ -17,4 +17,9 @@ export type OrderInfo = {
 export type OrderInfoWithoutPrices = {
   buyer: string
   purchases: Omit<ItemPurchaseInfo, 'price'>[]
+}
+
+export type OrderClient = {
+  value: number
+  items: Record<number, ItemInOrder | undefined>
 }
