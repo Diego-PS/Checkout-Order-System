@@ -12,3 +12,11 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+@layer base {
+  @font-face {
+    font-family: 'Imperial Script';
+    font-weight: 400;
+    src: url(/assets/fonts/Imperial_Script/ImperialScript-Regular.ttf) format('truetype');
+  }
+}

@@ -25,9 +25,10 @@
     /* Paths */
     "baseUrl": "./src",
     "paths": {
-      "@config": ["./config.ts"],
-      "@app": ["./App.tsx"],
-      "@api": ["./api/index.ts"]
+      "@config": ["config.ts"],
+      "@pages": ["pages/index.ts"],
+      "@api": ["api/index.ts"],
+      "@routes": ["routes/index.tsx"]
     }
   },
   "include": ["src"]

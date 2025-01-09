@@ -17,4 +17,19 @@ export class MenuItemCategoryRepository {
 
     return category
   }
+
+  async get(
+    filter?: Omit<MenuItemCategory, 'image'>
+  ): Promise<MenuItemCategory[]> {
+    const categoriesDB = await this.prisma.category.findMany({
+      where: filter,
+      include: {
+        image: true,
+      },
+    })
+    const categories = categoriesDB.map((categoryDB) =>
+      removeAttributes(categoryDB, 'image_id')
+    )
+    return categories
+  }
 }

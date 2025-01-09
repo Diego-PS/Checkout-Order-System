@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getHelloMessage } from '@api'
 
-export const App = () => {
+export const HomePage = () => {
   const [helloMessage, setHelloMessage] = useState<string>('')
 
   const getMessage = async () => {
@@ -20,7 +20,7 @@ export const App = () => {
   return (
     <>
       <div className="w-full flex flex-col items-center justify-center">
-        <h1>{helloMessage}</h1>
+        <h1 className="font-imperial text-3xl">{helloMessage}</h1>
       </div>
     </>
   )
