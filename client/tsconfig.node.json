@@ -26,7 +26,8 @@
       "@config": ["config.ts"],
       "@pages": ["pages/index.ts"],
       "@api": ["api/index.ts"],
-      "@routes": ["routes/index.tsx"]
+      "@routes": ["routes/index.tsx"],
+      "@entities": ["entities/index.ts"]
     }
   },
   "include": ["vite.config.ts"]
