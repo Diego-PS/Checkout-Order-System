@@ -19,6 +19,10 @@ export const useOrder = () => {
     setOrderSatate(order)
   }
 
+  const resetOrder = () => {
+    setOrder({ value: 0, items: {} })
+  }
+
   const addItem = (item: MenuItem) => {
     const localOrder = getOrder()
     if (localOrder.items[item.id] !== undefined) {
@@ -48,5 +52,6 @@ export const useOrder = () => {
     order,
     addItem,
     removeItem,
+    resetOrder,
   }
 }

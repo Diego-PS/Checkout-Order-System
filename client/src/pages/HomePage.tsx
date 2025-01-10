@@ -17,8 +17,8 @@ const allCategory: MenuItemCategory = {
   id: 0,
   name: 'All items',
   image: {
-    id: 'f3fbf57b118fa9',
-    url: 'http://localhost:3000/images/f3fbf57b118fa9.jpg',
+    id: '3e1bd1342800f7',
+    url: 'http://localhost:3000/images/3e1bd1342800f7.jpg',
   },
 }
 
@@ -34,13 +34,10 @@ const CategoryCard = (props: CategoryCardProps) => {
       className="shrink-0 relative group w-32 h-32 cursor-pointer"
       onClick={() => props.setSelectedCategoryId(props.category.id)}
     >
-      {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${props.category.image.url})` }}
       ></div>
-
-      {/* Title Overlay */}
       {props.selectedCategoryId === props.category.id ? (
         <div className="absolute bottom-0 w-full bg-white/80 group-hover:bg-white/00 transition-all duration-300">
           <p className="text-black text-center py-2 group-hover:py-4 transition-all duration-300">
@@ -71,7 +68,7 @@ const MenuItemCard = (props: MenuItemCardProps) => {
   }
   return (
     <div className="w-full max-w-2xl flex flex-row items-center p-6 gap-5">
-      <div className="shrink-0 relative group w-32 h-32 cursor-pointer">
+      <div className="shrink-0 relative group w-32 h-32">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${props.item.image.url})` }}
@@ -208,19 +205,23 @@ export const HomePage = () => {
             <RestaurantBill height={50} width={50} color="white" />
           </div>
         </div>
-        {items.map((item, index) => (
-          <Fragment key={item.id}>
-            <MenuItemCard
-              item={item}
-              windowDimensions={windowDimensions}
-              addItem={() => addItem(item)}
-              openDrawer={() => setDrawerOpen(true)}
-            />
-            {index < items.length - 1 && (
-              <div className="max-w-2xl w-11/12 bg-espresso h-0.5" />
-            )}
-          </Fragment>
-        ))}
+        {items.length !== 0 ? (
+          items.map((item, index) => (
+            <Fragment key={item.id}>
+              <MenuItemCard
+                item={item}
+                windowDimensions={windowDimensions}
+                addItem={() => addItem(item)}
+                openDrawer={() => setDrawerOpen(true)}
+              />
+              {index < items.length - 1 && (
+                <div className="max-w-2xl w-11/12 bg-espresso h-0.5" />
+              )}
+            </Fragment>
+          ))
+        ) : (
+          <div className="m-5 text-center text-lg">No items found</div>
+        )}
       </div>
       <OrderDrawer
         open={drawerOpen}

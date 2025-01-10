@@ -77,35 +77,44 @@ export const OrderDrawer = (props: OrderDrawerPrpos) => {
               My &nbsp;Order
             </h1>
           </div>
-          <List>
-            {itemsIds.map((key, index) => (
-              <React.Fragment key={key}>
-                <Box>
-                  <OrderItem
-                    orderItem={props.order.items[parseInt(key)]!}
-                    addItem={props.addItem}
-                    removeItem={props.removeItem}
-                  />
-                </Box>
-                {index < itemsIds.length - 1 && (
-                  <div className="w-full flex flex-col items-center">
-                    <div className="w-11/12 bg-espresso h-0.5 margin-auto" />
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </List>
-          <div className="w-full p-6">
-            <div
-              onClick={() => navigate('/order')}
-              className="flex flex-row items-center justify-between px-5 bg-oliveGreen h-12 cursor-pointer hover:bg-oliveGreenDark"
-            >
-              <p className="text-darkCharcoal">Order</p>
-              <p className="text-darkCharcoal">
-                ${props.order.value.toFixed(2)}
-              </p>
+          {itemsIds.length === 0 ? (
+            <div className="p-5 text-center">
+              You do not have any item in your order, please add items from the
+              menu
             </div>
-          </div>
+          ) : (
+            <>
+              <List>
+                {itemsIds.map((key, index) => (
+                  <React.Fragment key={key}>
+                    <Box>
+                      <OrderItem
+                        orderItem={props.order.items[parseInt(key)]!}
+                        addItem={props.addItem}
+                        removeItem={props.removeItem}
+                      />
+                    </Box>
+                    {index < itemsIds.length - 1 && (
+                      <div className="w-full flex flex-col items-center">
+                        <div className="w-11/12 bg-espresso h-0.5 margin-auto" />
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </List>
+              <div className="w-full p-6">
+                <div
+                  onClick={() => navigate('/order')}
+                  className="flex flex-row items-center justify-between px-5 bg-oliveGreen h-12 cursor-pointer hover:bg-oliveGreenDark"
+                >
+                  <p className="text-darkCharcoal">Order</p>
+                  <p className="text-darkCharcoal">
+                    ${props.order.value.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </Box>
     </div>
